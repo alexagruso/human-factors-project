@@ -1,2 +1,3 @@
-# human-factors-project
-Budgeting web app for human factors
+SvelteKit will be on port 5000
+
+Flask will be on port 3000

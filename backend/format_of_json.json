@@ -1,0 +1,73 @@
+{
+    "Category": "PLACEHOLDER",
+    "MerchantName": "Walmart",
+    "TransactionDate": "2017-01-15",
+    "Items": [
+        {
+            "Name": "BANANAS",
+            "Quantity": 1.75,
+            "TotalItem": 0.95
+        },
+        {
+            "Name": "BEVERAGE",
+            "Quantity": "N/A",
+            "TotalItem": 2.0
+        },
+        {
+            "Name": "OS CRAN POM",
+            "Quantity": "N/A",
+            "TotalItem": 2.0
+        },
+        {
+            "Name": "STRWBRY CC",
+            "Quantity": "N/A",
+            "TotalItem": 0.96
+        },
+        {
+            "Name": "CAMPARI TOM",
+            "Quantity": "N/A",
+            "TotalItem": 2.98
+        },
+        {
+            "Name": "KFT SINGLES",
+            "Quantity": "N/A",
+            "TotalItem": 3.78
+        },
+        {
+            "Name": "44500982114",
+            "Quantity": "N/A",
+            "TotalItem": 3.98
+        },
+        {
+            "Name": "HARD SALAMI",
+            "Quantity": "N/A",
+            "TotalItem": 3.43
+        },
+        {
+            "Name": "AVOCADO",
+            "Quantity": 4.0,
+            "TotalItem": 1.76
+        },
+        {
+            "Name": "PILLS WHITE",
+            "Quantity": "N/A",
+            "TotalItem": 1.0
+        },
+        {
+            "Name": "SH NYLON COL",
+            "Quantity": "N/A",
+            "TotalItem": 2.97
+        },
+        {
+            "Name": "HAND CLEANER",
+            "Quantity": "N/A",
+            "TotalItem": 1.67
+        },
+        {
+            "Name": "INJECTR CLNR",
+            "Quantity": "N/A",
+            "TotalItem": 8.87
+        }
+    ],
+    "GrandTotal": 38.68
+}

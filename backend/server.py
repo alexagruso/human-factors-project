@@ -18,6 +18,11 @@ class SetEncoder(json.JSONEncoder):
 
 app = Flask(__name__)
 
+@app.route("/api/rand", methods = ['GET', 'POST'])
+def randomNumber():
+    randomNum = random.randint(1, 10)
+    return str(randomNum)
+
 @app.route("/api/image_process", methods = ['GET', 'POST'])
 def processImage():
      return request.data

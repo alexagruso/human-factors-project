@@ -1,19 +1,25 @@
+// test.js
+
+// Import functions from database.js
 const { connectToDatabase, getCollection } = require('./database');
 
+// Function to test database operations
 async function testDatabase() {
+  // Connect to the MongoDB database
   await connectToDatabase();
 
+  // Get the collection
   const collection = getCollection('receipts');
 
   // Example: Insert a document
   const result = await collection.insertOne({ name: 'Test Receipt', total: 50 });
-  //console.log('Inserted document:', result.ops[0]);
-  if (result.insertedCount === 1) {
+  // console.log('Inserted document:', result.ops[0]);
+  if(result.insertedCount === 1){
     console.log('Inserted document:', result.ops[0]);
-  } else {
-        console.error('Failed to insert document');
   }
-
+  else{
+    console.error('Failed to insert document');
+  }
 
   // Example: Find documents
   const documents = await collection.find({}).toArray();

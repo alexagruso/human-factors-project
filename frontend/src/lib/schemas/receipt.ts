@@ -1,5 +1,4 @@
-import mongoose, { Types, Schema, model } from "mongoose";
-import { MONGODB_URI } from "$env/static/private";
+import { Types, Schema, model, Model } from "mongoose";
 
 export interface Item {
     name: string;
@@ -12,11 +11,6 @@ export interface Receipt {
     items: Types.DocumentArray<Item>;
 }
 
-mongoose.connect(MONGODB_URI).catch((error) => {
-    console.error(error);
-    console.error("FAILED TO CONNECT TO MONGODB");
-});
-
 const receiptSchema = new Schema<Receipt>({
     merchant: { type: String, required: true },
     transactionDate: { type: Date, required: true },
@@ -28,4 +22,19 @@ const receiptSchema = new Schema<Receipt>({
     ],
 });
 
-export const Receipts = model<Receipt>("Receipt", receiptSchema);
+let receipts: Model<Receipt>;
+
+try {
+    receipts = model<Receipt>("Receipt");
+} catch (_) {
+    try {
+        receipts = model<Receipt>("Receipt", receiptSchema);
+    } catch (error) {
+        console.error(error);
+        console.error("ERROR: FAILED TO INITIALIZE RECEIPT SCHEMA");
+    }
+}
+
+export { receipts };
+
+// TODO: write receipt validation function

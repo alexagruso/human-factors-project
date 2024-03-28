@@ -1,7 +1,8 @@
 from flask import Flask, send_from_directory, request
 import random
 import base64
-import os
+from PIL import Image
+from io import BytesIO
 import pandas as pd
 import json
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -9,6 +10,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.svm import LinearSVC
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
+import re
 
 # set `<your-endpoint>` and `<your-key>` variables with the values from the Azure portal
 endpoint = "<endpoint>"
@@ -43,14 +45,18 @@ class SetEncoder(json.JSONEncoder):
 
 app = Flask(__name__)
 
+@app.route("/api/imageUpload", methods = ['GET', 'POST'])
+def testImage():
+    base64Request = request.json.get("image")
+    image_data = re.sub('^data:image/.+;base64,', '', base64Request)
+    im = Image.open(BytesIO(base64.b64decode(image_data)))
+    return str(im.width)
+
+
 @app.route("/api/rand", methods = ['GET', 'POST'])
 def randomNumber():
     randomNum = random.randint(1, 10)
     return str(randomNum)
-
-@app.route("/api/image_process", methods = ['GET', 'POST'])
-def processImage():
-     return request.data
 
 @app.route("/api/ocr_handler", methods = ['GET', 'POST'])
 def ocrTool():

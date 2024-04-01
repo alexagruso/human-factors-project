@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExpenseAid</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #162725;
+            color: #ffffff;
+        }
+        .container {
+            max-width: 1920px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            padding: 20px 0;
+        }
+        .form-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .form-container form {
+            display: flex;
+            align-items: center;
+            background-color: #30695F;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .form-container form input[type="file"],
+        .form-container form input[type="text"] {
+            margin-right: 10px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+        }
+        .form-container form button {
+            padding: 10px 20px;
+            background-color: #ffffff;
+            color: #214F4B;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .form-container form button:hover {
+            background-color: #ffffff;
+            color: #30695F;
+        }
+        h1{
+            color: #ffffff;
+        }
+        .budget {
+            background-color: #fdfdfd;
+            padding: 20px;
+            border-radius: 10px;
+            color: black;
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+        .budget h2{
+            color: black;
+        }
+        .recipes {
+            background-color: #30695F;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        h2 {
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header class="header">
+        <div class="header-text">
+            <div class="profile"> ExpenseAid User </div> 
+            <div class="search">
+                <input type="text" class="searchInput" placeholder="Search in site">
+            </div>
+        </div>
+    </header>
+
+    <!-- Receipt upload form -->
+    <header class="header">
+        <h1>Scan Receipts</h1>
+    </header>
+    <div class="form-container">
+        <form id="uploadForm">
+            <input type="file" id="receiptImage" accept="image/*">
+            <button type="submit">Upload Receipt</button>
+        </form>
+    </div>
+
+    <!-- Display uploaded receipt data -->
+    <ul id="receiptList"></ul>
+
+    <div class="form-container">
+        <form>
+            <input type="text" id="manualReceipt" placeholder="Enter Receipt Details">
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <!-- Budget summary section -->
+    <section class="budget">
+        <h2>Budget Summary</h2>
+        <p>This section will display scanned receipts and their categorized information.</p>
+    </section>
+
+    <section class="section recipes">
+        <h2>Def No Meal Recipes</h2>
+        <p>This section will provide meal recipes it probably won't because no time.</p>
+        <p>Potentially show budgets and categories and stuff? maybe what do you guys think?</p>
+    </section>
+</div>
+
+<!-- JavaScript to handle form submission and communication with server -->
+<script>
+    document.getElementById('uploadForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const formData = new FormData();
+        formData.append('receiptImage', document.getElementById('receiptImage').files[0]);
+
+        try {
+            const response = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+
+            // Update UI with uploaded receipt data
+            const receiptList = document.getElementById('receiptList');
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `
+                <p>Receipt Type: ${data.receiptType}</p>
+                <p>Merchant Name: ${data.merchant_name}</p>
+                <p>Transaction Date: ${data.transaction_date}</p>
+                <p>Items:</p>
+                <ul>
+                    ${data.items.map(item => `<li>Name: ${item.name}, Quantity: ${item.quantity}, Total: ${item.total_item}, Category: ${item.item_category}</li>`).join('')}
+                </ul>
+                <p>Grand Total: ${data.grand_total}</p>
+            `;
+            receiptList.appendChild(listItem);
+        } catch (error) {
+            console.error('Error uploading receipt:', error);
+        }
+    });
+
+
+    fetch('/api/receipts')
+    .then(response => response.json())
+    .then(data => {
+        // Process the retrieved data and update the UI
+        console.log(data);
+    })
+    .catch(error => {
+        console.error('Error fetching receipts:', error);
+    });
+
+    // Function to handle search
+    function handleSearch() {
+        const searchQuery = document.querySelector('.searchInput').value;
+
+        // Make a request to the backend server with the search query
+        fetch(`/api/search?query=${searchQuery}`)
+            .then(response => response.json())
+            .then(data => {
+                // Update the UI with the search results
+                console.log(data); // Replace this with code to update UI
+            })
+            .catch(error => {
+                console.error('Error searching:', error);
+            });
+    }
+
+    // Add event listener to the search input field
+    document.querySelector('.searchInput').addEventListener('input', handleSearch);
+
+</script>
+
+</body>
+</html>

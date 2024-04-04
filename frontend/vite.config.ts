@@ -8,7 +8,9 @@ export default defineConfig({
     },
     server: {
         proxy: {
-            "/api": "http://localhost:3000", //anything with /api in url is proxied
+            "/api": {
+                target: "http://backend:3000",
+            }, //anything with /api in url is proxied
         },
         port: 5000,
         strictPort: false,

@@ -1,0 +1,18 @@
+services:
+  frontend:
+    build: frontend/
+    container_name: frontend
+    ports:
+      - "5000:5000"
+    networks: 
+      - app
+  backend:
+    build: backend/
+    container_name: backend
+    ports:
+      - "3000:3000"
+    networks: 
+      - app
+
+networks:
+  app:

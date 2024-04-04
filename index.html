@@ -120,7 +120,7 @@
 
     <!-- Receipt entry form (hidden by default) -->
     <div class="form-container" id="manualEntryForm" style="display: none;">
-        <form action>
+        <form onsubmit="submitManualEntry(event)">
             <label for="merchantName">Merchant Name:</label>
             <input type="text" id="merchantName" name="merchantName" placeholder="Merchant Name..">
           
@@ -129,11 +129,12 @@
           
             <label for="itemCategory">Item Category:</label>
             <select id="itemCategory" name="itemCategory">
-              <option value="food">Food</option>
-              <option value="medicinal">Medicinal</option>
-              <option value="clothes">Clothes</option>
-              <option value="cleaning">Cleaning</option>
-              <option value="miscellaneous">Miscellaneous</option>
+              <option value="Food">Food</option>
+              <option value="Automotive">Automotive</option>
+              <option value="Personal Care">Personal Care</option>
+              <option value="Merchandise">Merchandise</option>
+              <option value="Clothes">Clothes</option>
+              <option value="Miscellaneous">Miscellaneous</option>
             </select>
           
             <label for="itemName">Item Name:</label>
@@ -164,7 +165,7 @@
 
 <!-- JavaScript to handle form submission and communication with server -->
 <script>
-    document.getElementById('uploadForm').addEventListener('submit', async function(event) {
+    async function submitReceipt(event) {
         event.preventDefault();
 
         const formData = new FormData();
@@ -194,7 +195,7 @@
         } catch (error) {
             console.error('Error uploading receipt:', error);
         }
-    });
+    }
 
     function takePicture() {
         // Add code here to take a picture using device camera
@@ -203,6 +204,33 @@
 
     function openReceiptForm() {
         document.getElementById("manualEntryForm").style.display = "block";
+    }
+
+    async function submitManualEntry(event) {
+        event.preventDefault();
+
+        const merchantName = document.getElementById('merchantName').value;
+        const transactionDate = document.getElementById('transactionDate').value;
+        const itemCategory = document.getElementById('itemCategory').value;
+        const itemName = document.getElementById('itemName').value;
+        const quantity = document.getElementById('quantity').value;
+        const totalItem = document.getElementById('totalItem').value;
+
+        const manualEntryData = {
+            merchantName,
+            transactionDate,
+            itemCategory,
+            itemName,
+            quantity,
+            totalItem
+        };
+
+        try {
+            // Communicate with the backend here
+            console.log('Manual entry data:', manualEntryData);
+        } catch (error) {
+            console.error('Error submitting manual entry:', error);
+        }
     }
 
     fetch('/api/receipts')

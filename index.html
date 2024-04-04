@@ -82,6 +82,9 @@
         h2 {
             color: #ffffff;
         }
+        .item-field input.quantity {
+            width: 50px; /* Adjust the width as needed */
+        }
     </style>
 </head>
 <body>
@@ -102,9 +105,9 @@
     </header>
 
     <div class="form-container">
-        <form id="uploadForm" enctype="multipart/form-data">
+        <form id="uploadForm">
             <input type="file" id="receiptImage" accept="image/*"> <br>
-            <button type="submit"> Upload Receipt </button>
+            <button type="button" onclick="encodeImage()"> Upload Receipt </button>
         </form>
     </div>
 
@@ -123,31 +126,35 @@
         <form onsubmit="submitManualEntry(event)">
             <label for="merchantName">Merchant Name:</label>
             <input type="text" id="merchantName" name="merchantName" placeholder="Merchant Name..">
-          
+        
             <label for="transactionDate">Transaction Date:</label>
             <input type="date" id="transactionDate" name="transactionDate">
-          
+        
             <label for="itemCategory">Item Category:</label>
             <select id="itemCategory" name="itemCategory">
-              <option value="Food">Food</option>
-              <option value="Automotive">Automotive</option>
-              <option value="Personal Care">Personal Care</option>
-              <option value="Merchandise">Merchandise</option>
-              <option value="Clothes">Clothes</option>
-              <option value="Miscellaneous">Miscellaneous</option>
+                <option value="Food">Food</option>
+                <option value="Automotive">Automotive</option>
+                <option value="Personal Care">Personal Care</option>
+                <option value="Merchandise">Merchandise</option>
+                <option value="Clothes">Clothes</option>
+                <option value="Miscellaneous">Miscellaneous</option>
             </select>
-          
-            <label for="itemName">Item Name:</label>
-            <input type="text" id="itemName" name="itemName" placeholder="Item Name..">
-          
-            <label for="quantity">Quantity:</label>
-            <input type="number" id="quantity" name="quantity" placeholder="Quantity..">
-          
-            <label for="totalItem">Total Item:</label>
+        
+            <div id="itemFieldsContainer">
+                <div class="item-field">
+                    <label for="itemName1">Item Name:</label>
+                    <input type="text" class="itemName" name="itemName1" placeholder="Item Name..">
+                    <input type="number" class="quantity" name="quantity1" placeholder="Qty.." size = "5">
+                </div>
+            </div>
+        
+            <button type="button" onclick="addNewItemField()">Add Another Item</button>
+        
+            <br><label for="totalItem">Total Item:</label>
             <input type="number" id="totalItem" name="totalItem" placeholder="Total Item..">
-          
+        
             <input type="submit" value="Submit">
-          </form>
+        </form>
     </div>
 
     <!-- Budget summary section -->
@@ -165,6 +172,42 @@
 
 <!-- JavaScript to handle form submission and communication with server -->
 <script>
+    let itemIndex = 1;
+
+    function addNewItemField() {
+        const itemFieldsContainer = document.getElementById('itemFieldsContainer');
+        const newItemField = document.createElement('div');
+        newItemField.classList.add('item-field');
+        newItemField.innerHTML = `
+            <label for="itemName${itemIndex}">Item Name:</label>
+            <input type="text" class="itemName" name="itemName${itemIndex}" placeholder="Item Name..">
+            <input type="number" class="quantity" name="quantity${itemIndex}" placeholder="Quantity..">
+        `;
+        itemFieldsContainer.appendChild(newItemField);
+        itemIndex++;
+    }
+
+    async function encodeImage() {
+        const fileInput = document.getElementById('receiptImage');
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function(event) {
+            const base64String = event.target.result.split(',')[1]; // Extract base64 data
+            submitReceipt(base64String);
+        };
+
+        reader.readAsDataURL(file);
+    }
+
+    async function submitReceipt(base64String) {
+        try {
+            console.log('Base64 encoded image:', base64String); // Should send base64String to the backend for processing
+        } catch (error) {
+            console.error('Error uploading receipt:', error);
+        }
+    }
+
     async function submitReceipt(event) {
         event.preventDefault();
 
@@ -206,24 +249,29 @@
         document.getElementById("manualEntryForm").style.display = "block";
     }
 
-    async function submitManualEntry(event) {
-        event.preventDefault();
+    function submitManualEntry(event) {
+    event.preventDefault();
 
-        const merchantName = document.getElementById('merchantName').value;
-        const transactionDate = document.getElementById('transactionDate').value;
-        const itemCategory = document.getElementById('itemCategory').value;
-        const itemName = document.getElementById('itemName').value;
-        const quantity = document.getElementById('quantity').value;
-        const totalItem = document.getElementById('totalItem').value;
+    const merchantName = document.getElementById('merchantName').value;
+    const transactionDate = document.getElementById('transactionDate').value;
+    const itemCategory = document.getElementById('itemCategory').value;
+    const totalItem = document.getElementById('totalItem').value;
 
-        const manualEntryData = {
-            merchantName,
-            transactionDate,
-            itemCategory,
-            itemName,
-            quantity,
-            totalItem
-        };
+    const itemData = [];
+    const itemFields = document.querySelectorAll('.item-field');
+    itemFields.forEach((itemField, index) => {
+        const itemName = itemField.querySelector('.itemName').value;
+        const quantity = itemField.querySelector('.quantity').value;
+        itemData.push({ itemName, quantity });
+    });
+
+    const manualEntryData = {
+        merchantName,
+        transactionDate,
+        itemCategory,
+        totalItem,
+        itemData
+    };
 
         try {
             // Communicate with the backend here

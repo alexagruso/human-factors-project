@@ -19,7 +19,7 @@
         }
         .header {
             text-align: center;
-            padding: 20px 0;
+            padding: 15px 0;
         }
         .form-container {
             display: flex;
@@ -28,14 +28,20 @@
         }
         .form-container form {
             display: flex;
+            flex-direction: column;
             align-items: center;
             background-color: #30695F;
             padding: 20px;
             border-radius: 10px;
         }
-        .form-container form input[type="file"],
-        .form-container form input[type="text"] {
-            margin-right: 10px;
+        .form-container form label {
+            margin-bottom: 10px;
+        }
+        .form-container form input[type="text"],
+        .form-container form input[type="date"],
+        .form-container form input[type="number"],
+        .form-container form select {
+            margin-bottom: 10px;
             padding: 10px;
             border: none;
             border-radius: 5px;
@@ -94,21 +100,53 @@
     <header class="header">
         <h1>Scan Receipts</h1>
     </header>
+
     <div class="form-container">
-        <form id="uploadForm">
-            <input type="file" id="receiptImage" accept="image/*">
-            <button type="submit">Upload Receipt</button>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" id="receiptImage" accept="image/*"> <br>
+            <button type="submit"> Upload Receipt </button>
         </form>
     </div>
 
-    <!-- Display uploaded receipt data -->
-    <ul id="receiptList"></ul>
-
+    <!-- Take picture of receipt -->
     <div class="form-container">
-        <form>
-            <input type="text" id="manualReceipt" placeholder="Enter Receipt Details">
-            <button type="submit">Submit</button>
-        </form>
+        <button onclick="takePicture()" style="padding: 15px 40px;">Take Picture</button>
+    </div>
+
+    <!-- Manual receipt entry -->
+    <div class="form-container">
+        <button onclick="openReceiptForm()" style="padding: 15px 40px;">Enter Receipt Details Manually</button>
+    </div>
+
+    <!-- Receipt entry form (hidden by default) -->
+    <div class="form-container" id="manualEntryForm" style="display: none;">
+        <form action>
+            <label for="merchantName">Merchant Name:</label>
+            <input type="text" id="merchantName" name="merchantName" placeholder="Merchant Name..">
+          
+            <label for="transactionDate">Transaction Date:</label>
+            <input type="date" id="transactionDate" name="transactionDate">
+          
+            <label for="itemCategory">Item Category:</label>
+            <select id="itemCategory" name="itemCategory">
+              <option value="food">Food</option>
+              <option value="medicinal">Medicinal</option>
+              <option value="clothes">Clothes</option>
+              <option value="cleaning">Cleaning</option>
+              <option value="miscellaneous">Miscellaneous</option>
+            </select>
+          
+            <label for="itemName">Item Name:</label>
+            <input type="text" id="itemName" name="itemName" placeholder="Item Name..">
+          
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" name="quantity" placeholder="Quantity..">
+          
+            <label for="totalItem">Total Item:</label>
+            <input type="number" id="totalItem" name="totalItem" placeholder="Total Item..">
+          
+            <input type="submit" value="Submit">
+          </form>
     </div>
 
     <!-- Budget summary section -->
@@ -158,6 +196,14 @@
         }
     });
 
+    function takePicture() {
+        // Add code here to take a picture using device camera
+        alert('Feature under development.');
+    }
+
+    function openReceiptForm() {
+        document.getElementById("manualEntryForm").style.display = "block";
+    }
 
     fetch('/api/receipts')
     .then(response => response.json())

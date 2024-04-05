@@ -3,39 +3,23 @@ import random
 import base64
 from PIL import Image
 from io import BytesIO
-import pandas as pd
 import json
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.model_selection import train_test_split
-from sklearn.svm import LinearSVC
+from waitress import serve
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
+import pickle
 import re
+
+
+print("Server is running...") #waitress doesn't tell you that's it's up D: how atrocious
+print("Running on localhost:3000")
 
 # set `<your-endpoint>` and `<your-key>` variables with the values from the Azure portal
 endpoint = "<endpoint>"
 key = "<key>"
 
-df = pd.read_csv('ourDataset.csv', usecols=['name', 'main_category'])
-
-# Feature extraction using TF-IDF
-vectorizer = TfidfVectorizer(stop_words='english')
-X = vectorizer.fit_transform(df['name'])
-
-# Target variable
-y = df['main_category']
-
-# Split the data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# Initialize the Linear Support Vector Classifier
-classifier = LinearSVC()
-
-# Train the classifier
-classifier.fit(X_train, y_train)
-
-# Predictions on the test set
-#y_pred = classifier.predict(X_test)
+vectorizer = pickle.load(open('tfidf_balanced.sav', 'rb'))
+classifier = pickle.load(open('linearsvc_balanced.sav', 'rb'))
 
 class SetEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -51,7 +35,6 @@ def testImage():
     image_data = re.sub('^data:image/.+;base64,', '', base64Request)
     im = Image.open(BytesIO(base64.b64decode(image_data)))
     return str(im.width)
-
 
 @app.route("/api/rand", methods = ['GET', 'POST'])
 def randomNumber():
@@ -94,13 +77,13 @@ def ocrTool():
                     new_description.append(item_description.value)
                     new_description_vectorized = vectorizer.transform(new_description)
                     predicted_category = classifier.predict(new_description_vectorized)
-                    if(predicted_category[0] != 'Food' and predicted_category[0] != 'grocery & gourmet foods'): #two types of item expenses on receipts, food and shopping (yes many categories of shopping but they're all just shopping)
-                        inferredResult = 'Shopping/Entertainment'
-                    else:
-                        inferredResult = 'Food'
+                    inferredResult = predicted_category[0]
+                    if(predicted_category == "Arts & Crafts"):
+                        inferredResult = "Merchandise"
                     receiptItemsDict['Item_Category'] = inferredResult
                 else:
                     receiptItemsDict['Name'] = 'N/A'
+                    receiptItemsDict['Item_Category'] = "Other" #six categories we use are: food, merchandise, clothes, personal care, automotive, and other
                 item_quantity = item.value.get("Quantity")
                 if item_quantity:
                     receiptItemsDict['Quantity'] = item_quantity.value
@@ -125,5 +108,6 @@ def ocrTool():
     return data_str
 
 
+
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port="3000")
+    serve(app, host='localhost', port=3000)

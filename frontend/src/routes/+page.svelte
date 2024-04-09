@@ -1,6 +1,8 @@
 <script lang="ts">
     import { enhance } from "$app/forms";
     import { page } from "$app/stores";
+
+    let response: string | undefined;
 </script>
 
 {#if $page.data.loggedIn}
@@ -39,6 +41,19 @@
     </div>
     {#if $page.form?.registerError}
         <h2>{$page.form.error}</h2>
+    {/if}
+
+    <button
+        on:click={async () => {
+            response = await fetch("/api/rand").then((res) => {
+                if (res.body) {
+                    return res.json();
+                }
+            });
+        }}>Ping rand</button
+    >
+    {#if response}
+        <h2>{response}</h2>
     {/if}
 </main>
 

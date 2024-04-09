@@ -1,316 +1,253 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang = "en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExpenseAid</title>
+
+    <meta charset = "UTF-8">
+    <meta name = "viewport" content="width=device-width, initial-scale=1.0">
+    <title> ExpenseAid </title>
+    <link href = "https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel = "stylesheet">
+
     <style>
+
         body {
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
-            background-color: #162725;
-            color: #ffffff;
+            padding-top: 100px;
+            font-family: 'Poppins', sans-serif;
+            background-color: #1f253d;
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            line-height: 110%;
         }
-        .container {
-            max-width: 1920px;
-            margin: 0 auto;
-            padding: 20px;
+        .dark-mode{
+            background-color: #0b241b;
+            color: white;
         }
-        .header {
+        .light-mode{
+            background-color: #52b788;
+            color: black;
+        }
+        .header{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            background-color: black;
+            padding: 20px 10px;
+            z-index: 1;
+        }
+        .header a{
+            float: left;
+            color: white;
             text-align: center;
-            padding: 15px 0;
+            padding: 12px;
+            text-decoration: none;
+            font-size: 18px;
+            line-height: 25px;
+            border-radius: 4px;
         }
-        .form-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
+        .header a.logo{
+            font-size: 25px;
+            font-weight: bold;
         }
-        .form-container form {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-color: #30695F;
-            padding: 20px;
-            border-radius: 10px;
+        .header a:hover{
+            background-color: #ddd;
+            color: black;
         }
-        .form-container form label {
-            margin-bottom: 10px;
+        .header a.active{
+            background-color: #006e52;
+            color: white;
         }
-        .form-container form input[type="text"],
-        .form-container form input[type="date"],
-        .form-container form input[type="number"],
-        .form-container form select {
-            margin-bottom: 10px;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            outline: none;
+        .header-right{
+            float: right;
+            padding: 5px;
         }
-        .form-container form button {
+        @media screen and (max-width: 500px){
+            .header{
+                float: none;
+                display: block;
+                text-align: left;
+            }
+            .header-right{
+                float: none;
+            }
+        }
+        .introduction{
+            display: block;
+            padding: 70px;
+            text-align: center;
+        }
+        .introduction button{
+            background-color: #006e52;
+            border:#0b241b;
+            color: white;
             padding: 10px 20px;
-            background-color: #ffffff;
-            color: #214F4B;
-            border: none;
-            border-radius: 5px;
+            text-align: center;
+            display: inline-block;
+            font-size: 22px;
+            margin: 4px 2px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            border-radius: 4px;
         }
-        .form-container form button:hover {
-            background-color: #ffffff;
-            color: #30695F;
+        .introduction.button:hover {
+            background: #0F9295;
         }
-        h1{
-            color: #ffffff;
-        }
-        .budget {
-            background-color: #fdfdfd;
-            padding: 20px;
-            border-radius: 10px;
-            color: black;
-            margin-top: 20px;
-            margin-bottom: 40px;
-        }
-        .budget h2{
+        .introduction.light-mode{
+            background-image: url("lightMode.png");
             color: black;
         }
-        .recipes {
-            background-color: #30695F;
+        .light-mode .introduction button {
+            background-color: #1b4332;
+        }
+        .manual-entry-card{
+            background-color: #d8f3dc;
+            border-radius: 8px;
             padding: 20px;
-            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            color: black;
         }
-        h2 {
-            color: #ffffff;
+        .banner{
+            padding-block: 10px;
+            background-color: black;
+            color: white;
+            text-align: center;
         }
-        .item-field input.quantity {
-            width: 50px; /* Adjust the width as needed */
+        footer{
+            background-color: black;
+            color: white;
+            text-align: center;
+            padding: 25px;
         }
+        .info{
+            padding: 50px;
+            text-align: left;
+            overflow: auto;
+        }
+        .info img{
+            width: 450px;
+            height: 450px;
+            float: left;
+            margin-right: 10px;
+        }
+        .manual-entry-card input[type="text"],
+        .manual-entry-card input[type="date"],
+        .manual-entry-card input[type="number"],
+        .manual-entry-card select {
+            background-color: white;
+            border: 2px solid #006e52;
+            color: black;
+            padding: 8px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .manual-entry-card input[type="text"]:focus,
+        .manual-entry-card input[type="date"]:focus,
+        .manual-entry-card input[type="number"]:focus,
+        .manual-entry-card select:focus {
+            outline: none;
+            border-color: #1b4332;
+        }
+
     </style>
 </head>
-<body>
 
-<div class="container">
-    <header class="header">
-        <div class="header-text">
-            <div class="profile"> ExpenseAid User </div> 
-            <div class="search">
-                <input type="text" class="searchInput" placeholder="Search in site">
+<body>
+    <header>
+        <div class = "header">
+            <a class = "logo"> <img src = "logo.png" style = "width: 50px; height: 50px;"> ExpenseAid </a> 
+            <div class = "header-right">
+                <a class = "active" href = "#home" onclick = "myFunction()"> &#9728 </a>
+                <a href = "profile.html"> Profile </a>
+                <a href = "#search"> Search... </a>
             </div>
         </div>
     </header>
 
-    <!-- Receipt upload form -->
-    <header class="header">
-        <h1>Scan Receipts</h1>
-    </header>
-
-    <div class="form-container">
-        <form id="uploadForm">
-            <input type="file" id="receiptImage" accept="image/*"> <br>
-            <button type="button" onclick="encodeImage()"> Upload Receipt </button>
-        </form>
-    </div>
-
-    <!-- Take picture of receipt -->
-    <div class="form-container">
-        <button onclick="takePicture()" style="padding: 15px 40px;">Take Picture</button>
-    </div>
-
-    <!-- Manual receipt entry -->
-    <div class="form-container">
-        <button onclick="openReceiptForm()" style="padding: 15px 40px;">Enter Receipt Details Manually</button>
-    </div>
-
-    <!-- Receipt entry form (hidden by default) -->
-    <div class="form-container" id="manualEntryForm" style="display: none;">
-        <form onsubmit="submitManualEntry(event)">
-            <label for="merchantName">Merchant Name:</label>
-            <input type="text" id="merchantName" name="merchantName" placeholder="Merchant Name..">
-        
-            <label for="transactionDate">Transaction Date:</label>
-            <input type="date" id="transactionDate" name="transactionDate">
-        
-            <label for="itemCategory">Item Category:</label>
-            <select id="itemCategory" name="itemCategory">
-                <option value="Food">Food</option>
-                <option value="Automotive">Automotive</option>
-                <option value="Personal Care">Personal Care</option>
-                <option value="Merchandise">Merchandise</option>
-                <option value="Clothes">Clothes</option>
-                <option value="Miscellaneous">Miscellaneous</option>
-            </select>
-        
-            <div id="itemFieldsContainer">
-                <div class="item-field">
-                    <label for="itemName1">Item Name:</label>
-                    <input type="text" class="itemName" name="itemName1" placeholder="Item Name..">
-                    <input type="number" class="quantity" name="quantity1" placeholder="Qty.." size = "5">
-                </div>
+    <div class = "introduction">
+        <br>
+        <h1> Snap & Save: Budgeting Made Easy! </h1>
+        <h2> Scan, or Upload Your Receipts Today! </h2>
+        <button onclick = "showUploadOptions()"> Scan or Upload Receipts </button>
+        <br>
+        <div class = "upload-options-container" id = "uploadOptionsContainer" style = "display: none;">
+        <div class = "form-container">
+            <form is = "uploadForm">
+                <input type = "file" id = "receiptImage" accept = "image/*"><br>
+                <button type = "button" onclick = "encodeImage()"> Upload Receipt </button>
+            </form>
+        </div>
+        <br>
+        <div class = "form-container">
+            <button onclick = "takePicture()" style = "padding: 15px 40px;"> Take Picture </button>
+        </div>
+        <br>
+        <div class = "form-container">
+            <button onclick = "openReceiptForm()" style = "padding: 15px 40px;"> Enter Receipt Details Manually </button>
+        </div>
+        <br>
+        <div class = "form-container" id = "manualEntryForm" style = "display: none;">
+            <div class="manual-entry-card">
+                <form onsubmit="submitManualEntry(event)">
+                    <label for="merchantName">Merchant Name:</label>
+                    <input type="text" id="merchantName" name="merchantName" placeholder="Merchant Name...">
+            
+                    <label for="transactionDate">Transaction Date:</label>
+                    <input type="date" id="transactionDate" name="transactionDate"><br>
+            
+                    <br>
+                    <div id="itemFieldsContainer">
+                        <div class="item-field">
+                            <select class="itemType">
+                                <option value="Food">Food</option>
+                                <option value="Automotive">Automotive</option>
+                                <option value="Personal Care">Personal Care</option>
+                                <option value="Merchandise">Merchandise</option>
+                                <option value="Clothes">Clothes</option>
+                                <option value="Miscellaneous">Miscellaneous</option>
+                            </select>
+                            <input type="text" class="itemName" name="itemName" placeholder="Item Name...">
+                            <input type="number" class="quantity" name="quantity" placeholder="Qty." style="width: 3.5em;">
+                            <input type="number" class="price" name="price" placeholder="Price">
+                        </div>
+                    </div>
+                    <br>
+            
+                    <button type="button" onclick="addNewItemField()"> Add More Items </button>
+            
+                    <label for="totalItem">Total Items:</label>
+                    <input type="number" id="totalItem" name="totalItem" placeholder="Total Item.." readonly>
+            
+                    <input type="submit" value="Submit">
+                </form>
             </div>
-        
-            <button type="button" onclick="addNewItemField()">Add Another Item</button>
-        
-            <br><label for="totalItem">Total Item:</label>
-            <input type="number" id="totalItem" name="totalItem" placeholder="Total Item..">
-        
-            <input type="submit" value="Submit">
-        </form>
+            
+            </div>  
+        </div>
     </div>
 
-    <!-- Budget summary section -->
-    <section class="budget">
-        <h2>Budget Summary</h2>
-        <p>This section will display scanned receipts and their categorized information.</p>
-    </section>
+    <div class = "banner">
+        <h1> &#x2606; </h1>
+    </div>
 
-    <section class="section recipes">
-        <h2>Def No Meal Recipes</h2>
-        <p>This section will provide meal recipes it probably won't because no time.</p>
-        <p>Potentially show budgets and categories and stuff? maybe what do you guys think?</p>
-    </section>
+    <div class = "info">
+        <img src = "logo.png" alt = "logo" style = "width: 350px; height: 350px; float: left; margin-right: 10px;">
+        <h3> WHAT DO WE PUT HERE? (SMILEY FACE) </h3>
+        <p> &#x2606; &#x2606; &#x2606; &#x2606; &#x2606; &#x2606; &#x2606; &#x2606; &#x2606; &#x2606; &#x2606; </p>
+        <p> (can and will def change the picture it's just there for now) </p>
+        <p> &#x2606; &#x2606; &#x2606; &#x2606; &#x2606; &#x2606; &#x2606; &#x2606; &#x2606; &#x2606; &#x2606; </p>
+        <h6> we'll figure this out :P </h6> 
+    </div>
+
+    <footer>
+        Made with &#10084; by Luke, Alex, and Aliyah
+    </footer>
+
 </div>
 
-<!-- JavaScript to handle form submission and communication with server -->
-<script>
-    let itemIndex = 1;
-
-    function addNewItemField() {
-        const itemFieldsContainer = document.getElementById('itemFieldsContainer');
-        const newItemField = document.createElement('div');
-        newItemField.classList.add('item-field');
-        newItemField.innerHTML = `
-            <label for="itemName${itemIndex}">Item Name:</label>
-            <input type="text" class="itemName" name="itemName${itemIndex}" placeholder="Item Name..">
-            <input type="number" class="quantity" name="quantity${itemIndex}" placeholder="Quantity..">
-        `;
-        itemFieldsContainer.appendChild(newItemField);
-        itemIndex++;
-    }
-
-    async function encodeImage() {
-        const fileInput = document.getElementById('receiptImage');
-        const file = fileInput.files[0];
-        const reader = new FileReader();
-
-        reader.onload = function(event) {
-            const base64String = event.target.result.split(',')[1]; // Extract base64 data
-            submitReceipt(base64String);
-        };
-
-        reader.readAsDataURL(file);
-    }
-
-    async function submitReceipt(base64String) {
-        try {
-            console.log('Base64 encoded image:', base64String); // Should send base64String to the backend for processing
-        } catch (error) {
-            console.error('Error uploading receipt:', error);
-        }
-    }
-
-    async function submitReceipt(event) {
-        event.preventDefault();
-
-        const formData = new FormData();
-        formData.append('receiptImage', document.getElementById('receiptImage').files[0]);
-
-        try {
-            const response = await fetch('/api/upload', {
-                method: 'POST',
-                body: formData
-            });
-            const data = await response.json();
-
-            // Update UI with uploaded receipt data
-            const receiptList = document.getElementById('receiptList');
-            const listItem = document.createElement('li');
-            listItem.innerHTML = `
-                <p>Receipt Type: ${data.receiptType}</p>
-                <p>Merchant Name: ${data.merchant_name}</p>
-                <p>Transaction Date: ${data.transaction_date}</p>
-                <p>Items:</p>
-                <ul>
-                    ${data.items.map(item => `<li>Name: ${item.name}, Quantity: ${item.quantity}, Total: ${item.total_item}, Category: ${item.item_category}</li>`).join('')}
-                </ul>
-                <p>Grand Total: ${data.grand_total}</p>
-            `;
-            receiptList.appendChild(listItem);
-        } catch (error) {
-            console.error('Error uploading receipt:', error);
-        }
-    }
-
-    function takePicture() {
-        // Add code here to take a picture using device camera
-        alert('Feature under development.');
-    }
-
-    function openReceiptForm() {
-        document.getElementById("manualEntryForm").style.display = "block";
-    }
-
-    function submitManualEntry(event) {
-    event.preventDefault();
-
-    const merchantName = document.getElementById('merchantName').value;
-    const transactionDate = document.getElementById('transactionDate').value;
-    const itemCategory = document.getElementById('itemCategory').value;
-    const totalItem = document.getElementById('totalItem').value;
-
-    const itemData = [];
-    const itemFields = document.querySelectorAll('.item-field');
-    itemFields.forEach((itemField, index) => {
-        const itemName = itemField.querySelector('.itemName').value;
-        const quantity = itemField.querySelector('.quantity').value;
-        itemData.push({ itemName, quantity });
-    });
-
-    const manualEntryData = {
-        merchantName,
-        transactionDate,
-        itemCategory,
-        totalItem,
-        itemData
-    };
-
-        try {
-            // Communicate with the backend here
-            console.log('Manual entry data:', manualEntryData);
-        } catch (error) {
-            console.error('Error submitting manual entry:', error);
-        }
-    }
-
-    fetch('/api/receipts')
-    .then(response => response.json())
-    .then(data => {
-        // Process the retrieved data and update the UI
-        console.log(data);
-    })
-    .catch(error => {
-        console.error('Error fetching receipts:', error);
-    });
-
-    // Function to handle search
-    function handleSearch() {
-        const searchQuery = document.querySelector('.searchInput').value;
-
-        // Make a request to the backend server with the search query
-        fetch(`/api/search?query=${searchQuery}`)
-            .then(response => response.json())
-            .then(data => {
-                // Update the UI with the search results
-                console.log(data); // Replace this with code to update UI
-            })
-            .catch(error => {
-                console.error('Error searching:', error);
-            });
-    }
-
-    // Add event listener to the search input field
-    document.querySelector('.searchInput').addEventListener('input', handleSearch);
-
-</script>
+<script src = "app.js"></script>
 
 </body>
 </html>

@@ -1,11 +1,3 @@
-# Project installation/execution instructions
-
-## Set up environment
-
-Copy `.env.example` to `.env`
-
-In `.env`, set `MONGODB_URI` to the URI provided by mongodb atlas, filling in your username and password. Ensure that it is using the `data` collection.
-
 ## Docker
 
 To build the docker container, run `docker build -t frontend:frontend .`.

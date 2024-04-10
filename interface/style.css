@@ -984,9 +984,9 @@ p.center-date {
 }
 
 /******************************* FOOTER ******************************************/
-footer{
-    background: #50597b;
-    color: white;
-    text-align: center;
-    padding: 20px;
+footer {
+  background: #50597b;
+  color: white;
+  text-align: center;
+  padding: 20px;
 }

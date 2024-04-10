@@ -162,6 +162,10 @@ function showUploadOptions() {
 
 let itemIndex = 1;
 
+function deleteNode(item){
+  item.parentNode.remove()
+}
+
 function addNewItemField() {
   const itemFieldsContainer = document.getElementById('itemFieldsContainer');
     const newItemField = document.createElement('div');
@@ -177,7 +181,8 @@ function addNewItemField() {
         </select>
         <input type="text" class="itemName" name="itemName" placeholder="Item Name...">
         <input type="number" class="quantity" name="quantity" placeholder="Qty." style="width: 3.5em;">
-        <input type="number" class="price" name="price" placeholder="Price">
+        <input type="number" step="any" class="price" name="price" placeholder="Price">
+        <button name = "deleteButton" onclick="deleteNode(this)">X</button>
     `;
   itemFieldsContainer.appendChild(newItemField);
 }

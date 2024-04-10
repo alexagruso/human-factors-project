@@ -180,9 +180,6 @@
             </form>
         </div>
         <br>
-        <div class = "form-container">
-            <button onclick = "takePicture()" style = "padding: 15px 40px;"> Take Picture </button>
-        </div>
         <br>
         <div class = "form-container">
             <button onclick = "openReceiptForm()" style = "padding: 15px 40px;"> Enter Receipt Details Manually </button>
@@ -210,14 +207,15 @@
                             </select>
                             <input type="text" class="itemName" name="itemName" placeholder="Item Name...">
                             <input type="number" class="quantity" name="quantity" placeholder="Qty." style="width: 3.5em;">
-                            <input type="number" class="price" name="price" placeholder="Price">
+                            <input type="number" step="any" class="price" name="price" placeholder="Price">
+                            <button name = "deleteButton" onclick="deleteNode(this)">X</button>
                         </div>
                     </div>
                     <br>
             
                     <button type="button" onclick="addNewItemField()"> Add More Items </button>
             
-                    <label for="totalItem">Total Items:</label>
+                    <label for="totalItem">Total Cost:</label>
                     <input type="number" id="totalItem" name="totalItem" placeholder="Total Item.." readonly>
             
                     <input type="submit" value="Submit">

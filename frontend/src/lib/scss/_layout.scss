@@ -1,0 +1,19 @@
+// utility classes for defining basic flex containers
+
+.row {
+    display: flex;
+    flex-direction: row;
+
+    &-rev {
+        flex-direction: row-reverse;
+    }
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+
+    &-rev {
+        flex-direction: column-reverse;
+    }
+}

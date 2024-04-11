@@ -1,0 +1,43 @@
+@use "colors" as *;
+@use "typography" as *;
+
+* {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    margin: 0;
+    outline: none;
+    border: none;
+    padding: 0;
+
+    background: none;
+
+    font-family: Ubuntu;
+    font-weight: 400;
+    text-decoration: none;
+    color: inherit;
+}
+
+html {
+    font-size: 1em;
+}
+
+body {
+    // position: relative;
+
+    display: flex;
+    flex-direction: column;
+
+    min-height: 100vh;
+
+    background-color: $primary-dark;
+}
+
+img {
+    display: block;
+    object-fit: scale-down;
+}
+
+button {
+    cursor: pointer;
+}

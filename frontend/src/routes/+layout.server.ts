@@ -1,6 +1,6 @@
 import { building } from "$app/environment";
 import { MONGODB_URI } from "$env/static/private";
-import { sessions } from "$lib/session";
+import { sessions } from "$lib/schemas/session";
 import mongoose from "mongoose";
 import type { LayoutServerLoad } from "./$types";
 

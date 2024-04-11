@@ -9,11 +9,11 @@
         </div>
         <div class="credits row">
             <span>Created by</span>
-            <a href="/" target="_blank">Luke</a>
+            <a href="https://github.com/lgayler00" target="_blank">Luke</a>
             <span>,</span>
             <a href="https://github.com/alexagruso" target="_blank">Alex</a>
             <span>, and</span>
-            <a href="/" target="_blank">Alliyah</a>
+            <a href="https://github.com/aliyah-ym58" target="_blank">Aliyah</a>
         </div>
     </div>
 </footer>

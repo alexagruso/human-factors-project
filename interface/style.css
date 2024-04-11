@@ -1,22 +1,5 @@
 /************************************ FONTS ************************************/
-@import url(https://fonts.googleapis.com/css?family=Ubuntu:400,700);
-@import url(https://weloveiconfonts.com/api/?family=entypo|fontawesome|zocial);
-
-/* entypo */
-[class*="entypo-"]:before {
-  font-family: 'entypo', sans-serif;
-}
-
-/* fontawesome */
-[class*="fontawesome-"]:before {
-  font-family: 'FontAwesome', sans-serif;
-}
-
-/* zocial */
-[class*="zocial-"]:before {
-  font-family: 'zocial', sans-serif;
-}
-
+@import url('https://fonts.googleapis.com/css?family=Ubuntu:400,700');
 @font-face {
   font-family: 'icomoon';
   src: url('https://jlalovi-cv.herokuapp.com/font/icomoon.eot');
@@ -30,25 +13,15 @@
 
 [class^="icon-"],
 [class*=" icon-"] {
-  font-family: 'icomoon';
-  speak: none;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
+  font-family: 'icomoon', sans-serif;
+}
 
-  /* Better Font Rendering =========== */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.icon {
+  font-size: 25px;
 }
 
 .icon-receipt:before {
   content: "\1F9FE";
-}
-
-.icon-receipt:before {
-  content: "\e610";
 }
 
 .icon-receipt2:before {
@@ -62,6 +35,12 @@
   box-sizing: border-box;
 }
 
+:root {
+  --primary-color: #11a8ab;
+  --secondary-color: #50597b;
+  --accent-color: #e64c65;
+}
+
 body {
   background: #1f253d;
 }
@@ -69,24 +48,17 @@ body {
 ul {
   list-style-type: none;
   margin: 0;
-  padding-left: 0;
+  padding: 0;
 }
 
-h1 {
-  font-size: 23px;
-}
-
-h2 {
-  font-size: 17px;
-}
-
-p {
-  font-size: 15px;
+h1, h2, p, a, span {
+  margin: 0;
 }
 
 a {
   text-decoration: none;
   font-size: 15px;
+  color: inherit;
 }
 
 a:hover {
@@ -115,36 +87,14 @@ input[type=text] {
   margin-left: 20px;
   margin-bottom: 20px;
   padding-left: 45px;
-  background: #50597b;
+  background: var(--secondary-color);
   color: #fff;
-  border: solid 1px #1f253d;
+  border: solid 1px var(--secondary-color);
   border-radius: 5px;
 }
 
-input[type=text]::-webkit-input-placeholder {
-  /* WebKit browsers */
+.input-container input[type=text]::placeholder {
   color: #fff;
-}
-
-input[type=text]:-moz-input-placeholder {
-  /* Mozilla Firefox 4 to 18 */
-  color: #fff;
-}
-
-input[type=text]::-moz-input-placeholder {
-  /* Mozilla Firefox 19+ */
-  color: #fff;
-}
-
-input[type=text]:-ms-input-placeholder {
-  /* Internet Explorer 10+ */
-  color: #fff;
-}
-
-input[type=text]:focus {
-  outline: none;
-  /* removes the default orange border when focus */
-  border: 1px solid #11a8ab;
 }
 
 .input-icon {
@@ -781,23 +731,6 @@ p.center-date {
 
 /********************************************* RIGHT CONTAINER ****************************************/
 .right-container {}
-
-.join-newsletter {
-  height: 230px;
-}
-
-.join-newsletter .titular {
-  padding-top: 10px;
-}
-
-.subscribe.button {
-  background: #11a8ab;
-  margin-top: 10px;
-}
-
-.subscribe.button:hover {
-  background: #0F9295;
-}
 
 .line-chart-block {
   height: 400px;

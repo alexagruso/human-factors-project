@@ -25,6 +25,7 @@
     <br>
     <h1>Snap & Save: Budgeting Made Easy!</h1>
     <h2>Scan, or Upload Your Receipts Today!</h2>
+    <div class = "container-background">
     <button onclick="showUploadOptions()">Scan or Upload Receipts</button>
     <br>
     <div class="upload-options-container" id="uploadOptionsContainer" style="display: none;">
@@ -34,6 +35,7 @@
           <button type="button" onclick="encodeImage()">Upload Receipt</button>
         </form>
       </div>
+    </div>
       <br>
       <br>
       <div class="form-container">
@@ -80,20 +82,6 @@
     </div>
   </div>
 
-  <div class="banner">
-    <h1>&#x2606;</h1>
-  </div>
-
-  <div class="info">
-    <img src="https://fakeimg.pl/600x400/50597b/ffffff?text=ExpenseAid&font=bebas" alt="logo"
-      style="width: 350px; height: 350px; float: left; margin-right: 10px;">
-    <h3>WHAT DO WE PUT HERE? (SMILEY FACE)</h3>
-    <p>&#x2606;&#x2606;&#x2606;&#x2606;&#x2606;&#x2606;&#x2606;&#x2606;&#x2606;&#x2606;&#x2606;</p>
-    <p>(can and will def change the picture it's just there for now)</p>
-    <p>&#x2606;&#x2606;&#x2606;&#x2606;&#x2606;&#x2606;&#x2606;&#x2606;&#x2606;&#x2606;&#x2606;</p>
-    <h6>we'll figure this out :P</h6>
-  </div>
-
   <footer>
     Made with &#10084; by Luke, Alex, and Aliyah
   </footer>
@@ -108,7 +96,7 @@
       var header = document.querySelector(".header");
 
       if (element.classList.contains("light-mode")) {
-        manualEntryCard.style.backgroundColor = "#1f253d";
+        manualEntryCard.style.backgroundColor = "#50597b";
         banner.style.backgroundColor = "#1f253d";
         footer.style.backgroundColor = "#1f253d";
         header.style.backgroundColor = "#1f253d";

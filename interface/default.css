@@ -8,15 +8,17 @@ body {
     font-size: 1rem;
     font-weight: bold;
     line-height: 110%;
+    min-height: 100vh;
+    position: relative;
   }
   
   .dark-mode {
-    background-color: #0b241b;
+    background-color: #1f253d;
     color: white;
   }
   
   .light-mode {
-    background-color: #50597b;
+    background-color: #9098B6;
     color: white;
   }
   
@@ -107,29 +109,40 @@ body {
   .introduction.button:hover {
     background: #0F9295;
   }
-  
-  .introduction.light-mode {
-    background-image: url("lightMode.png");
-    color: black;
-  }
-  
+
   .light-mode .introduction button {
-    background-color: #0D8082;
+    background-color: #0F9295;
   }
+
+  .container-background {
+    background-color: #50597b;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .container-background button {
+    background-color: #11a8ab;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .container-background button:hover {
+    background-color: #0F9295;
+  }
+  
   
   .manual-entry-card {
     background-color: #50597b;
     border-radius: 8px;
     padding: 20px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
     color: white;
-  }
-  
-  .banner {
-    padding-block: 10px;
-    background-color: #50597b;
-    color: white;
-    text-align: center;
   }
   
   footer {
@@ -137,19 +150,6 @@ body {
     color: white;
     text-align: center;
     padding: 20px;
-  }
-  
-  .info {
-    padding: 50px;
-    text-align: left;
-    overflow: auto;
-  }
-  
-  .info img {
-    width: 450px;
-    height: 450px;
-    float: left;
-    margin-right: 10px;
   }
   
   .manual-entry-card input[type="text"],
@@ -169,5 +169,5 @@ body {
   .manual-entry-card input[type="number"]:focus,
   .manual-entry-card select:focus {
     outline: none;
-    border-color: #1b4332;
+    border-color: black;
   }

@@ -51,6 +51,10 @@
         width: 100%;
 
         background-color: $accent;
+
+        & h2 {
+            font-size: 1.5rem;
+        }
     }
 
     .form-body {

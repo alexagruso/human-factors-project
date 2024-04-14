@@ -1,3 +1,7 @@
+<script>
+    import { page } from "$app/stores";
+</script>
+
 <nav class="row">
     <div class="logo">
         <h2>ExpenseAid</h2>
@@ -5,8 +9,14 @@
     <div class="links row">
         <!--  TODO: make this dynamic -->
         <a href="/">Home</a>
-        <a href="/login">Login</a>
-        <a href="/register">Register</a>
+
+        {#if $page.data.loggedIn}
+            <a href="/profile">Profile</a>
+            <a href="/logout" data-sveltekit-reload>Logout</a>
+        {:else}
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
+        {/if}
     </div>
 </nav>
 

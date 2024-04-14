@@ -36,7 +36,7 @@ try {
 
 export { sessions };
 
-export const createSession = (email: string): Session => {
+export const createSessionFromUser = (email: string): Session => {
     return {
         sessionID: uuidv4(),
         email: email,

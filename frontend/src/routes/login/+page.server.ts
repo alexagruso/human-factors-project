@@ -1,7 +1,14 @@
 import bcrypt from "bcryptjs";
 import { isUser, users, type User } from "$lib/schemas/user";
 import { type Actions, fail, redirect } from "@sveltejs/kit";
-import { isSession, sessions, type Session, createSession } from "$lib/schemas/session";
+import { isSession, sessions, type Session, createSessionFromUser } from "$lib/schemas/session";
+import type { PageServerLoad } from "./$types";
+
+export const load: PageServerLoad = async ({ locals }) => {
+    if (locals.loggedIn) {
+        redirect(302, "/");
+    }
+};
 
 export const actions: Actions = {
     login: async ({ cookies, request }) => {
@@ -22,9 +29,11 @@ export const actions: Actions = {
                 return fail(401, { error: "Incorrect password", loginError: true });
             }
 
-            const oldSession = JSON.parse(cookies.get("Session") ?? "{}") as Session;
+            const sessionCookie = cookies.get("Session");
 
-            if (isSession(oldSession)) {
+            if (sessionCookie) {
+                const oldSession = JSON.parse(sessionCookie) as Session;
+
                 if (oldSession.email == foundUser.email) {
                     return fail(409, { error: "User is already logged in", loginError: true });
                 } else {
@@ -34,12 +43,13 @@ export const actions: Actions = {
                 }
             }
 
-            const newSession = createSession(foundUser.email);
+            const newSession = createSessionFromUser(foundUser.email);
 
             //  TODO: verify if insertMany() is idiomatic
             await sessions.insertMany(newSession);
             cookies.set("Session", JSON.stringify(newSession), { path: "/", expires: newSession.expiresAt });
         } catch (error) {
+            console.error(error);
             return fail(500, {
                 error: "Failed to log in due to a system issue, please try again later",
                 loginError: true,

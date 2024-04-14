@@ -5,7 +5,7 @@
 </script>
 
 {#if $page.data.loggedIn}
-    <h2>Logged in as {$page.data.currentSession.email}</h2>
+    <h2>Logged in as {$page.data.userEmail}</h2>
 {/if}
 
 <button

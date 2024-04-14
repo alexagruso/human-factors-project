@@ -1,7 +1,14 @@
 import bcrypt from "bcryptjs";
-import { isUser, users } from "$lib/schemas/user";
+import { isUser, users, type User } from "$lib/schemas/user";
 import { type Actions, fail, redirect } from "@sveltejs/kit";
 import { SALT_ROUNDS } from "$env/static/private";
+import type { PageServerLoad } from "./$types";
+
+export const load: PageServerLoad = async ({ locals }) => {
+    if (locals.loggedIn) {
+        redirect(302, "/");
+    }
+};
 
 export const actions: Actions = {
     register: async ({ request }) => {
@@ -16,10 +23,12 @@ export const actions: Actions = {
                 return fail(400, { error: "User already exists", registerError: true });
             }
 
-            const salt = await bcrypt.genSalt(parseInt(SALT_ROUNDS));
-            const encryptedPassword = await bcrypt.hash(data.password, salt);
+            const newUser: User = data;
 
-            await users.insertMany({ email: data.email, password: encryptedPassword });
+            const salt = await bcrypt.genSalt(parseInt(SALT_ROUNDS));
+            const encryptedPassword = await bcrypt.hash(newUser.password, salt);
+
+            await users.insertMany({ email: newUser.email, password: encryptedPassword });
         } catch (error) {
             return fail(500, {
                 error: "Failed to register due to a system issue, please try again later",
@@ -27,6 +36,6 @@ export const actions: Actions = {
             });
         }
 
-        throw redirect(302, "/");
+        throw redirect(302, "/login");
     },
 };

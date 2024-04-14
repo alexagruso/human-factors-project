@@ -38,3 +38,13 @@ try {
 export { receipts };
 
 // TODO: write receipt validation function
+export const isReceipt = (value: unknown): value is Receipt => {
+    return (
+        value !== null &&
+        typeof value === "object" &&
+        "sessionID" in value &&
+        "sessionEmail" in value &&
+        "createdAt" in value &&
+        "expiresAt" in value
+    );
+};

@@ -16,5 +16,7 @@
         align-items: center;
         gap: 1rem;
         flex-grow: 1;
+
+        padding: 1rem 0;
     }
 </style>

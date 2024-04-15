@@ -11,7 +11,6 @@ export const handle: Handle = async ({ event, resolve }) => {
         } else {
             event.locals.loggedIn = true;
             event.locals.userEmail = currentSession.email;
-            console.log(event.locals.userEmail);
         }
     } catch (error) {
         console.error(error);

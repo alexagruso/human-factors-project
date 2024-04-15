@@ -15,8 +15,8 @@ print("Server is running...") #waitress doesn't tell you that's it's up D: how a
 print("Running on localhost:3000")
 
 # set `<your-endpoint>` and `<your-key>` variables with the values from the Azure portal
-endpoint = "https://ocr-receipt-parser.cognitiveservices.azure.com/"
-key = "f450d727c95e47c68ab6441643297044"
+endpoint = "<your-endpoint>"
+key = "<your-key>"
 
 vectorizer = pickle.load(open('tfidf_balanced.sav', 'rb'))
 classifier = pickle.load(open('linearsvc_balanced.sav', 'rb'))

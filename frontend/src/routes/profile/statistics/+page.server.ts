@@ -13,7 +13,6 @@ export const load: PageServerLoad = async ({ locals }) => {
 
             for (let i = 0; i < object.length; i++) {
                 const tagArray: string = object[i].localID;
-                console.log(tagArray);
 
                 const foundItems: Item[] | undefined = await items.find({ receiptID: tagArray }).lean();
 

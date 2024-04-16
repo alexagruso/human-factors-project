@@ -34,17 +34,58 @@
         });
     };
 
+    const pushReceipt = () => {
+        let receipt = JSON.stringify(data.receipt);
+        let items = JSON.stringify(data.itemsArray);
+
+        console.log(receipt);
+        console.log(items);
+    };
+
+    const convert = async (file) => {
+        return new Promise((resolve, reject) => {
+            const fileReader = new FileReader();
+            fileReader.readAsDataURL(file);
+
+            fileReader.onload = () => {
+                resolve(fileReader.result);
+            };
+
+            fileReader.onerror = (error) => {
+                reject(error);
+            };
+        });
+    };
+
+    const fetchOCR = async (event) => {
+        const file = event.target.files[0];
+        const base64File = await convert(file);
+        console.log(base64File);
+
+        const response = await fetch("/api/ocr_handler", {
+            method: "POST",
+            body: JSON.stringify(base64File),
+        });
+
+        console.log(response);
+    };
+
     beforeUpdate(() => {
         grandTotal = calculateGrandTotal();
+        data.receipt.grandTotal = grandTotal;
     });
 
     export let data: PageData;
 </script>
 
-<form action="?/delete" method="POST">
-    <button type="submit">Clear</button>
-</form>
-
+<input
+    type="file"
+    name="receipt-image"
+    id="receipt-image-input"
+    on:change={(event) => {
+        fetchOCR(event);
+    }}
+/>
 <div class="card col">
     <div class="receipt col">
         <header>
@@ -155,7 +196,7 @@
                 <p>${grandTotal.toFixed(2)}</p>
             </section>
             <section class="interactions row">
-                <button>Submit</button>
+                <button on:click={pushReceipt}>Submit</button>
             </section>
         </div>
     </div>

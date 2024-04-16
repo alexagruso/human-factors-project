@@ -11,7 +11,9 @@ export interface Item {
 
 const itemSchema = new Schema<Item>({
     receiptID: { type: String, required: true },
+    localID: { type: String, required: true },
     productName: { type: String, required: true },
+    category: { type: String, required: true },
     quantity: { type: Number, required: true },
     price: { type: Number, required: true },
 });

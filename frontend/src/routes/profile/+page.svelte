@@ -2,40 +2,51 @@
     import { page } from "$app/stores";
 </script>
 
-<div class="profile-interface row">
-    <div class="user card col">
-        <header class="col">
-            <h2>Logged in as</h2>
-            <h2>
-                {$page.data.userEmail}
-            </h2>
-        </header>
-        <div class="information">
-            <h2>Hello</h2>
-            <input type="date" name="" id="" />
-        </div>
-    </div>
-    <div class="statistics card col">
-        <a href="/profile/statistics">Statistics</a>
+<div class="card col">
+    <header class="col">
+        <h2>Logged in as</h2>
+        <h2>
+            {$page.data.userEmail}
+        </h2>
+    </header>
+    <div class="links col">
         <a href="/profile/upload">Upload</a>
+        <a href="/profile/statistics">Statistics</a>
     </div>
 </div>
 
 <style lang="scss">
-    .profile-interface {
-        gap: 1rem;
-
-        width: clamp(50%, 10rem, 150rem);
-    }
-
     .card {
-        flex-basis: 0;
-
         overflow: hidden;
 
         border-radius: 0.5rem;
+        width: 100%;
+        max-width: 24rem;
 
         background-color: $primary;
+
+        color: $white;
+    }
+
+    .links {
+        align-items: center;
+    }
+
+    a {
+        transition: background-color 150ms;
+
+        padding: 1rem;
+
+        width: 100%;
+        text-align: center;
+
+        &:not(:last-of-type) {
+            border-bottom: 2px solid $primary-dark;
+        }
+
+        &:hover {
+            background-color: mix($primary, $white, 90%);
+        }
     }
 
     header {

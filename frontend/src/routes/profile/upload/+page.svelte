@@ -41,6 +41,10 @@
     export let data: PageData;
 </script>
 
+<form action="?/delete" method="POST">
+    <button type="submit">Clear</button>
+</form>
+
 <div class="card col">
     <div class="receipt col">
         <header>

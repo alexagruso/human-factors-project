@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Schema, model, Model } from "mongoose";
 
 export interface Receipt {
+    userID?: string;
     localID: string; // For items to point to
     vendor: string;
     transactionDate: Date;
@@ -9,6 +10,7 @@ export interface Receipt {
 }
 
 const receiptSchema = new Schema<Receipt>({
+    userID: { type: String },
     localID: { type: String, required: true },
     vendor: { type: String, required: true },
     transactionDate: { type: Date, required: true },

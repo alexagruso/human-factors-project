@@ -1,6 +1,7 @@
 import { Model, Schema, model } from "mongoose";
 
 export interface User {
+    id: string;
     email: string;
     password: string;
 }
@@ -19,12 +20,13 @@ try {
         users = model<User>("User", userSchema);
     } catch (error) {
         console.error(error);
-        console.error("ERROR: FAILED TO INITIALIZE USER SCHEMA");
+        console.error("ERROR: failed to initialize user schema");
     }
 }
 
 export { users };
 
+//  TODO: update this to actually check
 export const isUser = (value: unknown): value is User => {
     return value !== null && typeof value === "object" && "email" in value && "password" in value;
 };

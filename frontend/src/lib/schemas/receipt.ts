@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { Schema, model, Model } from "mongoose";
+import { items, type Item } from "./item";
 
 export interface Receipt {
     userID?: string;

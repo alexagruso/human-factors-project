@@ -4,33 +4,48 @@
     let response: string | undefined;
 </script>
 
-{#if $page.data.loggedIn}
-    <h2>Logged in as {$page.data.userEmail}</h2>
-{/if}
+<div class="greeting col">
+    <h1>ExpenseAid</h1>
+    <h2>Budgeting Made Easy!</h2>
 
-<button
-    on:click={async () => {
-        response = await fetch("/api/rand").then((res) => {
-            if (res.body) {
-                return res.json();
-            }
-        });
-    }}>Ping rand</button
->
-{#if response}
-    <h2>{response}</h2>
-{/if}
+    {#if !$page.data.loggedIn}
+        <p>Begin your budgeting journey by <a href="/login">Logging In</a></p>
+        <p>Or, if you don't have an account, <a href="/register">Register Now!</a></p>
+    {/if}
+</div>
 
 <style lang="scss">
-    h2 {
+    * {
         color: $white;
     }
 
-    button {
-        color: $white;
+    h1 {
+        font-size: 3rem;
+    }
+
+    h2 {
+        margin-bottom: 2rem;
+        font-size: 2rem;
+    }
+
+    p {
+        font-size: 0.9rem;
+    }
+
+    .greeting {
+        align-items: center;
+        gap: 1rem;
+    }
+
+    a {
+        transition: color 150ms;
+
+        color: $accent;
+        font-size: 0.8rem;
+        text-decoration: underline;
 
         &:hover {
-            background-color: $primary-dark;
+            color: mix($accent, $white, 75%);
         }
     }
 </style>

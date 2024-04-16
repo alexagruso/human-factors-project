@@ -25,7 +25,7 @@
             price: 0,
         });
 
-        data.itemsArray = data.itemsArray;
+        data.itemsArray = data.itemsArray; // push does not trigger svelte DOM update
     };
 
     const removeItemByID = (id: string) => {
@@ -34,12 +34,20 @@
         });
     };
 
-    const pushReceipt = () => {
-        let receipt = JSON.stringify(data.receipt);
-        let items = JSON.stringify(data.itemsArray);
+    const pushReceipt = async () => {
+        let pushData = {
+            receipt: data.receipt,
+            items: data.itemsArray,
+        };
 
-        console.log(receipt);
-        console.log(items);
+        fetch("/profile/upload", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+            },
+            body: JSON.stringify(pushData),
+        });
     };
 
     const convert = async (file) => {
@@ -60,14 +68,32 @@
     const fetchOCR = async (event) => {
         const file = event.target.files[0];
         const base64File = await convert(file);
-        console.log(base64File);
+
+        let ocr_data = { image: base64File };
 
         const response = await fetch("/api/ocr_handler", {
             method: "POST",
-            body: JSON.stringify(base64File),
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+            },
+            body: JSON.stringify(ocr_data),
         });
 
-        console.log(response);
+        let items: [] = (await response.json()).Items;
+
+        items.forEach((value) => {
+            data.itemsArray.push({
+                receiptID: data.receipt.localID,
+                localID: uuidv4(),
+                productName: value.productName,
+                quantity: value.quantity,
+                price: value.quantity,
+                category: value.category,
+            });
+        });
+
+        data.itemsArray = data.itemsArray; // push does not trigger svelte DOM update
     };
 
     beforeUpdate(() => {
@@ -196,7 +222,11 @@
                 <p>${grandTotal.toFixed(2)}</p>
             </section>
             <section class="interactions row">
-                <button on:click={pushReceipt}>Submit</button>
+                <button
+                    on:click={async () => {
+                        await pushReceipt();
+                    }}>Submit</button
+                >
             </section>
         </div>
     </div>

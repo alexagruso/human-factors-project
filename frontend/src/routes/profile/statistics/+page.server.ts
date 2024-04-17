@@ -4,9 +4,13 @@ import { items, type Item } from "@lib/schemas/item";
 
 export const load: PageServerLoad = async ({ locals }) => {
     const userItems: Array<Item> = [];
+    
+    let date: Date = new Date()
+    let firstDay : Date = new Date(date.getFullYear(), date.getMonth(), 1); //retrieves first day of the current month
+    let lastDay : Date = new Date(date.getFullYear(), date.getMonth() + 1, 0); //retrives the last of the current month
 
     try {
-        const foundReceipts: Receipt[] | undefined = await receipts.find({ userID: locals.userEmail }).lean();
+        const foundReceipts: Receipt[] | undefined = await receipts.find({ userID: locals.userEmail, transactionDate: { $gte: firstDay, $lte: lastDay} }).lean();
 
         if (foundReceipts) {
             const object = JSON.parse(JSON.stringify(foundReceipts));

@@ -35,7 +35,6 @@
                 break;
         }
     }
-
     let total = foodAmount + merchAmount + persCareAmount + otherAmount + clothesAmount + autoAmount;
 
     data = [];
@@ -92,7 +91,7 @@
         colorScale = d3
             .scaleOrdinal()
             .domain(data.map((d) => d.name))
-            .range(d3.quantize((t) => d3.interpolateSpectral(t * 0.8 + 0.1), data.length).reverse());
+            .range(["#E69F00", "#56B4E9", "#D55E00", "#F0E442", "#0072B2", "#CC79A7"]);
     }
 
     // Specify the chart’s dimensions.
@@ -129,7 +128,7 @@
         <!-- Loop through the data-slices. -->
         {#each arcs as slice}
             <!-- Add each pie-slice. -->
-            <path d={arcPath(slice)} fill={colorScale(slice.data.name)} />
+            <path id="slices" d={arcPath(slice)} fill={colorScale(slice.data.name)} stroke="black" data={slice.data.value}/>
 
             <!-- Add each label. -->
             <text style="font-weight: bold" transform="translate({arcLabel.centroid(slice)})" text-anchor="middle">

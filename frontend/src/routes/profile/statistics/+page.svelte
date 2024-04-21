@@ -13,16 +13,21 @@
     let firstDayOf3MonthsAgo : Date = new Date(date.getFullYear(), date.getMonth()-2, 1);
     let firstDayOf2MonthsAgo : Date = new Date(date.getFullYear(), date.getMonth()-1, 1);
 
+
+    let firstMonth = firstDayOf3MonthsAgo.toISOString().split('T')[0];
+    let secondMonth = firstDayOf2MonthsAgo.toISOString().split('T')[0];
+    let currMonth = date.toISOString().split('T')[0];
+
     lineData.push({
-        Date: firstDayOf3MonthsAgo,
+        Date: new Date(firstMonth),
         Spending: data.month3Value,
     });
     lineData.push({
-        Date: firstDayOf2MonthsAgo,
+        Date: new Date(secondMonth),
         Spending: data.month2Value,
     });
     lineData.push({
-        Date: date,
+        Date: new Date(currMonth),
         Spending: data.monthCurrValue,
     })
 

@@ -1,11 +1,50 @@
 <script lang="ts">
     import PieChart from "../../circle/PieChart.svelte";
+    import * as Plot from '@observablehq/plot'
     import type { PageData } from "./$types";
     import * as d3 from "d3";
 	import { onMount } from 'svelte';
     export let data: PageData;
 
+    let lineData = [];
+
+    
+    let date: Date = new Date()
+    let firstDayOf3MonthsAgo : Date = new Date(date.getFullYear(), date.getMonth()-2, 1);
+    let firstDayOf2MonthsAgo : Date = new Date(date.getFullYear(), date.getMonth()-1, 1);
+
+    lineData.push({
+        Date: firstDayOf3MonthsAgo,
+        Spending: data.month3Value,
+    });
+    lineData.push({
+        Date: firstDayOf2MonthsAgo,
+        Spending: data.month2Value,
+    });
+    lineData.push({
+        Date: date,
+        Spending: data.monthCurrValue,
+    })
+
+
     onMount(() => {
+    let divSelect = document.querySelector('.displayBox')
+    if(divSelect)
+    {
+        let lineGraph = Plot.plot({marks: [
+            Plot.frame({fill: "#ffffff"}),
+            Plot.gridX({fill: "black"}),
+            Plot.gridY({fill: "black"}),
+            Plot.axisY({color:"white"}),
+            Plot.axisX({ticks: "month", tickFormat:"  %b '%y", marginBottom: 40, color:"white"}),
+            Plot.areaY(lineData, {x: "Date", y: "Spending", fillOpacity: 0.3, fill:"#D55E00"}),
+            Plot.lineY(lineData, {x: "Date", y: "Spending", stroke:"#D55E00", tip:true}),
+            ]
+        })
+        divSelect.append(lineGraph);
+    } 
+    
+
     var tooltip = d3.select(".displayBox")
         .append("div")
         .style("position", "absolute")
@@ -35,16 +74,44 @@
             .attr('opacity', '1')
 		    tooltip.style("visibility", "hidden")
 	     })
-
   });
+
+
 </script>
 
-<h2>Monthly Spending by Category</h2>
 <div class = "displayBox">
-<PieChart {data} />
+<h2 id="pieheader">Monthly Spending by Category
+
+<div id="pie">
+<PieChart {data}/>
+</div>
+</h2>
 </div>
 <style lang="scss">
     h2 {
         color: $white;
+    }
+    .displayBox
+    {
+        width: 100vw;
+        display: inline-flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+        align-items: center;
+        align-content: space-around;
+    }
+    .displayBox > #pieheader
+    {
+        text-align: center;
+    }
+    .displayBox > #separate
+    {
+        margin-bottom: 30px;
+    }
+    .displayBox > #pie
+    {
+        align-self: auto;
+        margin: 4px;
     }
 </style>

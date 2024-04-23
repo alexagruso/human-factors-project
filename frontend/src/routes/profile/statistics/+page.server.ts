@@ -1,12 +1,14 @@
 import { receipts, type Receipt } from "@lib/schemas/receipt";
 import type { PageServerLoad } from "../$types";
 import { items, type Item } from "@lib/schemas/item";
+import { users, type User } from "$lib/schemas/user";
 
 export const load: PageServerLoad = async ({ locals }) => {
     const userItems: Array<Item> = [];
     let spending3Month : number = 0.00; //spending from 2 months ago
     let spending2Month : number = 0.00; //spending from last month
     let spendingMonthCurr : number = 0.00; //spending up to current day for current month
+    let monthlyBudget : number = 0.00;
     
     let date: Date = new Date()
     let firstDay : Date = new Date(date.getFullYear(), date.getMonth(), 1); //retrieves first day of the current month
@@ -78,6 +80,16 @@ export const load: PageServerLoad = async ({ locals }) => {
         console.error(error);
     }
 
-    return { items: JSON.parse(JSON.stringify(userItems)), month3Value: spending3Month, month2Value: spending2Month, monthCurrValue: spendingMonthCurr};
+    try{
+        const foundBudgetCurr : User | undefined = await users.findOne({ email: locals.userEmail}, 'monthlybudget').lean();
+        if(foundBudgetCurr)
+        {
+            monthlyBudget = foundBudgetCurr.monthlybudget;
+        }
+    } catch(error) {
+        console.error(error);
+    }
+
+    return { items: JSON.parse(JSON.stringify(userItems)), month3Value: spending3Month, month2Value: spending2Month, monthCurrValue: spendingMonthCurr, monthlybudget: monthlyBudget};
 };
 

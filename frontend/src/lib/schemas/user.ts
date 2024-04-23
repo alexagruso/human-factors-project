@@ -4,11 +4,13 @@ export interface User {
     id: string;
     email: string;
     password: string;
+    monthlybudget: number;
 }
 
 const userSchema = new Schema<User>({
     email: { type: String, required: true },
     password: { type: String, required: true },
+    monthlybudget: {type: Number, required: true}
 });
 
 let users: Model<User>;

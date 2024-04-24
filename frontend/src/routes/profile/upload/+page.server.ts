@@ -4,12 +4,12 @@ import { type Actions } from "@sveltejs/kit";
 import { items, type Item } from "@lib/schemas/item";
 
 export const load: PageServerLoad = async ({ locals }) => {
-    const newReceipt = createReceipt("", new Date());
-    newReceipt.userID = locals.userEmail;
+    const receipt = createReceipt("", new Date());
+    receipt.userID = locals.userEmail;
 
-    const itemsArray: Item[] = [];
+    const items: Item[] = [];
 
-    return { receipt: newReceipt, itemsArray };
+    return { receipt, items };
 };
 
 export const actions: Actions = {

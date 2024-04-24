@@ -1,5 +1,14 @@
 import { Model, Schema, model } from "mongoose";
 
+export const categories = {
+    automotive: "Automotive",
+    clothes: "Clothes",
+    food: "Food",
+    merchandise: "Merchandise",
+    misc: "Misc",
+    personalCare: "Personal Care",
+};
+
 export interface Item {
     receiptID: string; // Which receipt the item belongs to
     localID: string;

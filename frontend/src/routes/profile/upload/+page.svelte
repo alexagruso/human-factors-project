@@ -2,14 +2,24 @@
     import { v4 as uuidv4 } from "uuid";
     import type { PageData } from "./$types";
     import { beforeUpdate } from "svelte";
-    import { isItem } from "@lib/schemas/item";
+    import { convert } from "@lib/utils/imageConverter";
+    import { categories } from "@lib/schemas/item";
 
+    let transactionDate = new Date().toISOString().split("T").at(0)!;
     let grandTotal = 0;
+
+    let ocrStatus = "Upload Receipt";
+    let ocrError = false;
+
+    let submitStatus = "";
+    let submitError = false;
+
+    let disableImageUpload = false;
 
     const calculateGrandTotal = (): number => {
         let sum = 0;
 
-        data.itemsArray.forEach((item) => {
+        data.items.forEach((item) => {
             sum += item.price * item.quantity;
         });
 
@@ -17,7 +27,7 @@
     };
 
     const createNewItem = () => {
-        data.itemsArray.push({
+        data.items.push({
             receiptID: data.receipt.localID,
             localID: uuidv4(),
             productName: "",
@@ -26,19 +36,21 @@
             price: 0,
         });
 
-        data.itemsArray = data.itemsArray; // push does not trigger svelte DOM update
+        data.items = data.items; // push does not trigger svelte DOM update
     };
 
     const removeItemByID = (id: string) => {
-        data.itemsArray = data.itemsArray.filter((item) => {
+        data.items = data.items.filter((item) => {
             return item.localID != id;
         });
     };
 
     const pushReceipt = async () => {
+        data.receipt.transactionDate = new Date(transactionDate);
+
         let pushData = {
             receipt: data.receipt,
-            items: data.itemsArray,
+            items: data.items,
         };
 
         fetch("/profile/upload", {
@@ -51,53 +63,53 @@
         });
     };
 
-    //  TODO: extract these to separate file
-    const convert = async (file) => {
-        return new Promise((resolve, reject) => {
-            const fileReader = new FileReader();
-            fileReader.readAsDataURL(file);
+    const fetchOCR = async (event: Event) => {
+        ocrStatus = "Scanning Receipt...";
+        ocrError = false;
 
-            fileReader.onload = () => {
-                resolve(fileReader.result);
-            };
+        disableImageUpload = true;
 
-            fileReader.onerror = (error) => {
-                reject(error);
-            };
-        });
-    };
+        try {
+            const rawFile = (event.target as HTMLInputElement).files![0];
+            let base64File: string;
 
-    const fetchOCR = async (event) => {
-        const file = event.target.files[0];
-        const base64File = await convert(file);
+            base64File = await convert(rawFile);
 
-        let ocr_data = { image: base64File };
+            const response = await fetch("/api/ocr_handler", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                },
+                body: JSON.stringify({ image: base64File }),
+            });
 
-        const response = await fetch("/api/ocr_handler", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-            },
-            body: JSON.stringify(ocr_data),
-        });
+            let items: [] = (await response.json()).Items;
 
-        let items: [] = (await response.json()).Items;
-
-        items.forEach((value) => {
-            if (isItem(value)) {
-                data.itemsArray.push({
+            items.forEach((value) => {
+                data.items.push({
                     receiptID: data.receipt.localID,
                     localID: uuidv4(),
                     productName: value.productName,
                     quantity: value.quantity,
-                    price: value.quantity,
+                    price: value.price,
                     category: value.category,
                 });
-            }
-        });
+            });
+        } catch (error) {
+            console.error(`ERROR: ${error}`);
 
-        data.itemsArray = data.itemsArray; // push does not trigger svelte DOM update
+            ocrStatus = "Failed to upload file!";
+            ocrError = true;
+
+            return;
+        } finally {
+            disableImageUpload = false;
+        }
+
+        ocrStatus = "Scanning Complete!";
+
+        data.items = data.items; // push does not trigger svelte DOM update
     };
 
     beforeUpdate(() => {
@@ -108,14 +120,6 @@
     export let data: PageData;
 </script>
 
-<input
-    type="file"
-    name="receipt-image"
-    id="receipt-image-input"
-    on:change={(event) => {
-        fetchOCR(event);
-    }}
-/>
 <div class="card col">
     <div class="receipt col">
         <header>
@@ -123,6 +127,18 @@
             <span class="receipt-id">ID: {data.receipt.localID}</span>
         </header>
         <div class="receipt-body col">
+            <section class="image-upload col">
+                <span class={ocrError ? "error" : "accent"}>{ocrStatus}</span>
+                <input
+                    type="file"
+                    name="receipt-image"
+                    id="receipt-image-input"
+                    class:disabled={disableImageUpload}
+                    on:change={(event) => {
+                        fetchOCR(event);
+                    }}
+                />
+            </section>
             <section class="receipt-information col">
                 <div class="editable row">
                     <label for="receipt-vendor-input">
@@ -146,7 +162,7 @@
                         name="date"
                         id="receipt-date-input"
                         placeholder="mm/dd/yyyy"
-                        bind:value={data.receipt.transactionDate}
+                        bind:value={transactionDate}
                         required
                     />
                 </div>
@@ -156,7 +172,7 @@
                     <h3>Items:</h3>
                 </div>
                 <div class="entries col">
-                    {#each data.itemsArray as item}
+                    {#each data.items as item}
                         <div class="entry col">
                             <div class="product-name col">
                                 <label for="{item.localID}-product">
@@ -175,14 +191,18 @@
                                 <label for="{item.localID}-product">
                                     <p>Category</p>
                                 </label>
-                                <input
-                                    type="text"
+                                <select
                                     name="category"
                                     id="{item.localID}-category"
                                     placeholder="category"
                                     bind:value={item.category}
                                     required
-                                />
+                                >
+                                    <option value="" selected disabled hidden>Choose category</option>
+                                    {#each Object.entries(categories) as category}
+                                        <option value={category.at(0)}>{category.at(1)}</option>
+                                    {/each}
+                                </select>
                                 <label for="{item.localID}-product">
                                     <p>Quantity</p>
                                 </label>
@@ -228,9 +248,22 @@
             <section class="interactions row">
                 <button
                     on:click={async () => {
-                        await pushReceipt();
+                        try {
+                            submitError = false;
+                            submitStatus = "Uploading...";
+
+                            await pushReceipt();
+
+                            submitStatus = "Successfully uploaded receipt, redirecting...";
+                        } catch (error) {
+                            console.error(`ERROR: ${error}`);
+
+                            submitStatus = "Failed to upload receipt...";
+                            submitError = true;
+                        }
                     }}>Submit</button
                 >
+                <span class={submitError ? "error" : "accent"}>{submitStatus}</span>
             </section>
         </div>
     </div>
@@ -316,7 +349,8 @@
     }
 
     .interactions {
-        justify-content: right;
+        align-items: center;
+        gap: 1rem;
     }
 
     button {
@@ -341,7 +375,7 @@
         }
     }
 
-    input {
+    input:not([type="file"]) {
         transition: background-color 150ms;
 
         border-radius: 0.5rem;
@@ -379,5 +413,65 @@
         gap: 0.25rem;
 
         margin-left: 1rem;
+    }
+
+    input[type="file"] {
+        color: $white;
+
+        &::file-selector-button {
+            transition: background-color 150ms;
+
+            cursor: pointer;
+
+            margin-right: 0.5rem;
+            border-radius: 0.75rem;
+            border: none;
+            padding: 0.5rem 1rem;
+            width: fit-content;
+
+            background-color: $accent;
+
+            color: $white;
+            font-family: ubuntu;
+
+            &:hover {
+                background-color: mix($accent, $white, 90%);
+            }
+        }
+
+        .disabled {
+            color: red;
+        }
+    }
+
+    select {
+        transition: background-color 150ms;
+
+        border-radius: 0.5rem;
+        border: 2px solid $primary-dark;
+        padding: 0.5rem 0.25rem;
+
+        &::placeholder {
+            transition: color 150ms;
+
+            color: darken($white, 35%);
+        }
+
+        &:hover {
+            background-color: mix($primary, $white, 90%);
+
+            &::placeholder {
+                color: $white;
+            }
+        }
+    }
+
+    .error {
+        color: $error;
+    }
+
+    .image-upload {
+        align-items: center;
+        gap: 1rem;
     }
 </style>

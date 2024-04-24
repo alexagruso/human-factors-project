@@ -2,6 +2,7 @@
     import { v4 as uuidv4 } from "uuid";
     import type { PageData } from "./$types";
     import { beforeUpdate } from "svelte";
+    import { isItem } from "@lib/schemas/item";
 
     let grandTotal = 0;
 
@@ -50,6 +51,7 @@
         });
     };
 
+    //  TODO: extract these to separate file
     const convert = async (file) => {
         return new Promise((resolve, reject) => {
             const fileReader = new FileReader();
@@ -83,14 +85,16 @@
         let items: [] = (await response.json()).Items;
 
         items.forEach((value) => {
-            data.itemsArray.push({
-                receiptID: data.receipt.localID,
-                localID: uuidv4(),
-                productName: value.productName,
-                quantity: value.quantity,
-                price: value.quantity,
-                category: value.category,
-            });
+            if (isItem(value)) {
+                data.itemsArray.push({
+                    receiptID: data.receipt.localID,
+                    localID: uuidv4(),
+                    productName: value.productName,
+                    quantity: value.quantity,
+                    price: value.quantity,
+                    category: value.category,
+                });
+            }
         });
 
         data.itemsArray = data.itemsArray; // push does not trigger svelte DOM update

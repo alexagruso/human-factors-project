@@ -10,8 +10,9 @@
         </h2>
     </header>
     <div class="links col">
-        <a href="/profile/upload">Upload</a>
-        <a href="/profile/statistics">Statistics</a>
+        <a href="/profile/view">View Past Receipts</a>
+        <a href="/profile/statistics">View Statistics</a>
+        <a href="/profile/upload">Upload Receipt</a>
     </div>
 </div>
 

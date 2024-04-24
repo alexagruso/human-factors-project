@@ -11,6 +11,8 @@
     {#if !$page.data.loggedIn}
         <p>Begin your budgeting journey by <a href="/login">Logging In</a></p>
         <p>Or, if you don't have an account, <a href="/register">Register Now!</a></p>
+    {:else}
+        <p>Start by <a href="/profile/upload">uploading a receipt</a></p>
     {/if}
 </div>
 

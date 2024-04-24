@@ -2,3 +2,6 @@ bin/
 lib/
 lib64
 pyvenv.cfg
+
+linearsvc_balanced.sav
+tfidf_balanced.sav

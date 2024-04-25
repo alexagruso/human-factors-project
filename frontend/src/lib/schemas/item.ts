@@ -5,7 +5,7 @@ export const categories = {
     clothes: "Clothes",
     food: "Food",
     merchandise: "Merchandise",
-    misc: "Misc",
+    other: "Other",
     personalCare: "Personal Care",
 };
 

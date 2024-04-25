@@ -5,6 +5,7 @@
     import { convert } from "@lib/utils/imageConverter";
     import { categories } from "@lib/schemas/item";
     import { receipts } from "@lib/schemas/receipt";
+    import { goto } from "$app/navigation";
 
     let transactionDate = new Date().toISOString().split("T").at(0)!;
     let grandTotal = 0;
@@ -203,7 +204,7 @@
                         {#each data.items as item}
                             <div class="entry col">
                                 {#if badItemIDs.includes(item.localID)}
-                                    <span class="error">Item has missing entries, cannot submit</span>
+                                    <span class="error">Item has invalid entries</span>
                                 {/if}
                                 <div class="product-name col">
                                     <label for="{item.localID}-product">
@@ -310,7 +311,7 @@
                         badItemIDs = [];
 
                         data.items.forEach((item) => {
-                            if (!item.category || !item.productName || !item.price || !item.quantity) {
+                            if (!item.category || !item.productName || item.price <= 0 || item.quantity <= 0) {
                                 badItemIDs.push(item.localID);
                             }
                         });
@@ -329,6 +330,7 @@
                             await pushReceipt();
 
                             submitStatus = "Success, redirecting...";
+                            await goto("/profile/statistics");
                         } catch (error) {
                             console.error(`ERROR: ${error}`);
 

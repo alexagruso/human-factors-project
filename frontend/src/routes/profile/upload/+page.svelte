@@ -4,10 +4,9 @@
     import { beforeUpdate } from "svelte";
     import { convert } from "@lib/utils/imageConverter";
     import { categories } from "@lib/schemas/item";
-    import { receipts } from "@lib/schemas/receipt";
     import { goto } from "$app/navigation";
 
-    let transactionDate = new Date().toISOString().split("T").at(0)!;
+    let transactionDate: Date;
     let grandTotal = 0;
 
     let ocrStatus = "";
@@ -183,14 +182,7 @@
                     <label for="receipt-date-input">
                         <p>Date:</p>
                     </label>
-                    <input
-                        type="date"
-                        name="date"
-                        id="receipt-date-input"
-                        placeholder="mm/dd/yyyy"
-                        bind:value={transactionDate}
-                        required
-                    />
+                    <input type="date" name="date" id="receipt-date-input" bind:value={transactionDate} />
                 </div>
             </section>
             <section class="receipt-items col">
@@ -301,6 +293,13 @@
                             return;
                         }
 
+                        if (!transactionDate) {
+                            submitStatus = "Must choose a date";
+                            submitError = true;
+
+                            return;
+                        }
+
                         if (data.items.length == 0) {
                             submitStatus = "Receipt cannot be empty";
                             submitError = true;
@@ -330,7 +329,7 @@
                             await pushReceipt();
 
                             submitStatus = "Success, redirecting...";
-                            await goto("/profile/statistics");
+                            await goto("/profile/view");
                         } catch (error) {
                             console.error(`ERROR: ${error}`);
 

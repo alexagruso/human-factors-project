@@ -3,6 +3,7 @@ import type { PageServerLoad } from "../$types";
 import { items, type Item } from "@lib/schemas/item";
 
 export const load: PageServerLoad = async ({ locals }) => {
+    const foundReceipts: Array<Receipt> = [];
     const userItems: Array<Item> = [];
 
     try {
@@ -24,7 +25,10 @@ export const load: PageServerLoad = async ({ locals }) => {
             }
         }
 
-        return { receipts: JSON.parse(JSON.stringify(foundReceipts)), items: JSON.parse(JSON.stringify(userItems)) };
+        return {
+            receipts: JSON.parse(JSON.stringify(foundReceipts)) as Receipt[],
+            items: JSON.parse(JSON.stringify(userItems)) as Item[],
+        };
     } catch (error) {
         console.error(error);
     }

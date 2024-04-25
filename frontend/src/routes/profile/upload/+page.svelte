@@ -4,17 +4,21 @@
     import { beforeUpdate } from "svelte";
     import { convert } from "@lib/utils/imageConverter";
     import { categories } from "@lib/schemas/item";
+    import { receipts } from "@lib/schemas/receipt";
 
     let transactionDate = new Date().toISOString().split("T").at(0)!;
     let grandTotal = 0;
 
-    let ocrStatus = "Upload Receipt";
+    let ocrStatus = "";
     let ocrError = false;
 
     let submitStatus = "";
     let submitError = false;
 
     let disableImageUpload = false;
+
+    let editID = "";
+    let badItemIDs: string[] = [];
 
     const calculateGrandTotal = (): number => {
         let sum = 0;
@@ -53,27 +57,39 @@
             items: data.items,
         };
 
-        fetch("/profile/upload", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-            },
-            body: JSON.stringify(pushData),
-        });
+        try {
+            await fetch("/profile/upload", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                },
+                body: JSON.stringify(pushData),
+            });
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     const fetchOCR = async (event: Event) => {
-        ocrStatus = "Scanning Receipt...";
+        if (disableImageUpload) {
+            return;
+        }
+
+        ocrStatus = "Scanning, please wait...";
         ocrError = false;
 
         disableImageUpload = true;
 
         try {
-            const rawFile = (event.target as HTMLInputElement).files![0];
-            let base64File: string;
+            const formData = new FormData(event.target as HTMLFormElement);
+            const rawFile = formData.get("receipt-image") as File;
 
-            base64File = await convert(rawFile);
+            if (!rawFile) {
+                return;
+            }
+
+            const base64File = await convert(rawFile);
 
             const response = await fetch("/api/ocr_handler", {
                 method: "POST",
@@ -127,17 +143,26 @@
             <span class="receipt-id">ID: {data.receipt.localID}</span>
         </header>
         <div class="receipt-body col">
-            <section class="image-upload col">
-                <span class={ocrError ? "error" : "accent"}>{ocrStatus}</span>
-                <input
-                    type="file"
-                    name="receipt-image"
-                    id="receipt-image-input"
-                    class:disabled={disableImageUpload}
-                    on:change={(event) => {
-                        fetchOCR(event);
+            <section>
+                <form
+                    class="image-upload col"
+                    on:submit={async (event) => {
+                        await fetchOCR(event);
                     }}
-                />
+                >
+                    <input
+                        type="file"
+                        name="receipt-image"
+                        id="receipt-image-input"
+                        accept="image/*"
+                        required
+                        class:disabled={disableImageUpload}
+                    />
+                    <div class="upload-submit row">
+                        <button type="submit">Scan</button>
+                        <span class={ocrError ? "error" : "accent"}>{ocrStatus}</span>
+                    </div>
+                </form>
             </section>
             <section class="receipt-information col">
                 <div class="editable row">
@@ -172,72 +197,92 @@
                     <h3>Items:</h3>
                 </div>
                 <div class="entries col">
-                    {#each data.items as item}
-                        <div class="entry col">
-                            <div class="product-name col">
-                                <label for="{item.localID}-product">
-                                    <p>Product Name</p>
-                                </label>
-                                <input
-                                    type="text"
-                                    name="product"
-                                    id="{item.localID}-product-name"
-                                    placeholder="product name"
-                                    bind:value={item.productName}
-                                    required
-                                />
+                    {#if data.items.length == 0}
+                        <span>Receipt is empty</span>
+                    {:else}
+                        {#each data.items as item}
+                            <div class="entry col">
+                                {#if badItemIDs.includes(item.localID)}
+                                    <span class="error">Item has missing entries, cannot submit</span>
+                                {/if}
+                                <div class="product-name col">
+                                    <label for="{item.localID}-product">
+                                        <p>Product Name</p>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="product"
+                                        id="{item.localID}-product-name"
+                                        placeholder="product name"
+                                        bind:value={item.productName}
+                                        required
+                                    />
+                                    <div class="product-buttons row">
+                                        <button
+                                            on:click={() => {
+                                                if (editID == item.localID) {
+                                                    editID = "";
+                                                } else {
+                                                    editID = item.localID;
+                                                }
+                                            }}>Edit</button
+                                        >
+                                        <button
+                                            class="delete"
+                                            on:click={() => {
+                                                removeItemByID(item.localID);
+                                            }}>Delete</button
+                                        >
+                                    </div>
+                                </div>
+                                {#if editID == item.localID}
+                                    <div class="item-details col">
+                                        <label for="{item.localID}-product">
+                                            <p>Category</p>
+                                        </label>
+                                        <select
+                                            name="category"
+                                            id="{item.localID}-category"
+                                            placeholder="category"
+                                            bind:value={item.category}
+                                            required
+                                        >
+                                            <option value="" selected disabled hidden>Choose category</option>
+                                            {#each Object.entries(categories) as category}
+                                                <option value={category.at(1)}>{category.at(1)}</option>
+                                            {/each}
+                                        </select>
+                                        <label for="{item.localID}-product">
+                                            <p>Quantity</p>
+                                        </label>
+                                        <input
+                                            type="number"
+                                            name="quantity"
+                                            id="{item.localID}-quantity"
+                                            min="0"
+                                            step="1"
+                                            placeholder="quantity"
+                                            bind:value={item.quantity}
+                                            required
+                                        />
+                                        <label for="{item.localID}-product">
+                                            <p>Price ($)</p>
+                                        </label>
+                                        <input
+                                            type="number"
+                                            name="price"
+                                            id="{item.localID}-price"
+                                            min="0"
+                                            step="0.01"
+                                            placeholder="price"
+                                            bind:value={item.price}
+                                            required
+                                        />
+                                    </div>
+                                {/if}
                             </div>
-                            <div class="item-details col">
-                                <label for="{item.localID}-product">
-                                    <p>Category</p>
-                                </label>
-                                <select
-                                    name="category"
-                                    id="{item.localID}-category"
-                                    placeholder="category"
-                                    bind:value={item.category}
-                                    required
-                                >
-                                    <option value="" selected disabled hidden>Choose category</option>
-                                    {#each Object.entries(categories) as category}
-                                        <option value={category.at(0)}>{category.at(1)}</option>
-                                    {/each}
-                                </select>
-                                <label for="{item.localID}-product">
-                                    <p>Quantity</p>
-                                </label>
-                                <input
-                                    type="number"
-                                    name="quantity"
-                                    id="{item.localID}-quantity"
-                                    min="0"
-                                    step="1"
-                                    placeholder="quantity"
-                                    bind:value={item.quantity}
-                                    required
-                                />
-                                <label for="{item.localID}-product">
-                                    <p>Price ($)</p>
-                                </label>
-                                <input
-                                    type="number"
-                                    name="price"
-                                    id="{item.localID}-price"
-                                    min="0"
-                                    step="0.01"
-                                    placeholder="price"
-                                    bind:value={item.price}
-                                    required
-                                />
-                            </div>
-                            <button
-                                class="delete"
-                                on:click={() => {
-                                    removeItemByID(item.localID);
-                                }}>Delete</button
-                            >
-                        </div>
-                    {/each}
+                        {/each}
+                    {/if}
                 </div>
                 <button on:click={createNewItem}>New Item</button>
             </section>
@@ -248,13 +293,42 @@
             <section class="interactions row">
                 <button
                     on:click={async () => {
+                        if (!data.receipt.vendor) {
+                            submitStatus = "Vendor cannot be empty";
+                            submitError = true;
+
+                            return;
+                        }
+
+                        if (data.items.length == 0) {
+                            submitStatus = "Receipt cannot be empty";
+                            submitError = true;
+
+                            return;
+                        }
+
+                        badItemIDs = [];
+
+                        data.items.forEach((item) => {
+                            if (!item.category || !item.productName || !item.price || !item.quantity) {
+                                badItemIDs.push(item.localID);
+                            }
+                        });
+
+                        if (badItemIDs.length != 0) {
+                            submitStatus = "Invalid item, cannot submit";
+                            submitError = true;
+
+                            return;
+                        }
+
                         try {
                             submitError = false;
                             submitStatus = "Uploading...";
 
                             await pushReceipt();
 
-                            submitStatus = "Successfully uploaded receipt, redirecting...";
+                            submitStatus = "Success, redirecting...";
                         } catch (error) {
                             console.error(`ERROR: ${error}`);
 
@@ -340,6 +414,15 @@
         padding: 1rem 0;
     }
 
+    .product-label {
+        gap: 0.25rem;
+        align-items: end;
+
+        & input {
+            width: 15rem;
+        }
+    }
+
     .product-name {
         gap: 0.25rem;
     }
@@ -367,6 +450,8 @@
         }
 
         &.delete {
+            height: fit-content;
+
             background-color: $error;
 
             &:hover {
@@ -438,10 +523,6 @@
                 background-color: mix($accent, $white, 90%);
             }
         }
-
-        .disabled {
-            color: red;
-        }
     }
 
     select {
@@ -471,7 +552,16 @@
     }
 
     .image-upload {
-        align-items: center;
+        align-items: left;
         gap: 1rem;
+    }
+
+    .upload-submit {
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .product-buttons {
+        gap: 0.25rem;
     }
 </style>

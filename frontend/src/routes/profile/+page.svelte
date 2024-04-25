@@ -13,6 +13,7 @@
         <a href="/profile/view">View Past Receipts</a>
         <a href="/profile/statistics">View Statistics</a>
         <a href="/profile/upload">Upload Receipt</a>
+        <a href="/profile/budgetsettings">Budget Settings</a>
     </div>
 </div>
 
